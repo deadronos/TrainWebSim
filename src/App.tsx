@@ -1,5 +1,5 @@
 import { useGameLoop } from './game/GameLoop';
-import { GameCanvas } from './components/GameCanvas';
+import { Game3DScene } from './components/Game3DScene';
 import { Toolbar } from './components/Toolbar';
 import { useGameStore } from './game/GameState';
 import { InfoPanel } from './components/InfoPanel';
@@ -16,7 +16,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <GameCanvas />
+      <Game3DScene />
 
       <div className="ui-overlay">
         <div className="top-bar">
