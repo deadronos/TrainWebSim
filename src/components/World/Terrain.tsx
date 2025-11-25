@@ -4,6 +4,8 @@ import { MAP_HEIGHT, MAP_WIDTH, TileType } from '../../game/types';
 
 export const Terrain: React.FC = () => {
     const map = useGameStore((state) => state.map);
+    // Subscribe to tick to force re-render when tiles change
+    const tick = useGameStore((state) => state.tick);
 
     const tiles = useMemo(() => {
         const t = [];
@@ -16,7 +18,7 @@ export const Terrain: React.FC = () => {
             }
         }
         return t;
-    }, [map]);
+    }, [map, tick]);
 
     return (
         <group>
@@ -58,25 +60,39 @@ export const Terrain: React.FC = () => {
                                     if (!tile.hasTrack && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
                                         tile.hasTrack = true;
                                         spendMoney(200);
+                                        // Force state update
+                                        useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'station') {
-                                    if (!tile.hasStation && !tile.hasTrack && tile.type === TileType.GRASS) {
+                                    // Stations should be buildable on tracks (Transport Tycoon style)
+                                    if (!tile.hasStation && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
                                         tile.hasStation = true;
+                                        tile.hasTrack = true; // Stations include track
                                         spendMoney(2000);
+                                        // Force state update
+                                        useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'train') {
                                     if (tile.hasTrack) {
                                         trainSystem.spawnTrain(tile.x, tile.y);
                                         spendMoney(5000);
+                                        // Force state update for train spawn
+                                        useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'demolish') {
+                                    let changed = false;
                                     if (tile.hasTrack) {
                                         tile.hasTrack = false;
                                         spendMoney(50);
+                                        changed = true;
                                     }
                                     if (tile.hasStation) {
                                         tile.hasStation = false;
                                         spendMoney(50);
+                                        changed = true;
+                                    }
+                                    if (changed) {
+                                        useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 }
                             } else {

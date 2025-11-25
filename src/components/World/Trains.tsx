@@ -12,7 +12,7 @@ const TrainMesh: React.FC<{ train: any }> = ({ train }) => {
             // Game state x/y are floats, so it should be relatively smooth if tick rate is high enough
             // or if we interpolate between ticks.
             // For now, direct mapping.
-            meshRef.current.position.set(train.x, 0.3, train.y);
+            meshRef.current.position.set(train.x, 0.4, train.y);
 
             // Rotation
             if (train.path.length > 0) {
@@ -28,23 +28,54 @@ const TrainMesh: React.FC<{ train: any }> = ({ train }) => {
     });
 
     return (
-        <group ref={meshRef} position={[train.x, 0.3, train.y]}>
-            {/* Body */}
-            <mesh position={[0, 0.2, 0]}>
-                <boxGeometry args={[0.6, 0.4, 0.8]} />
-                <meshStandardMaterial color="#ffeb3b" />
+        <group ref={meshRef} position={[train.x, 0.4, train.y]}>
+            {/* Locomotive body */}
+            <mesh position={[0, 0.15, 0]}>
+                <boxGeometry args={[0.5, 0.35, 0.7]} />
+                <meshStandardMaterial color="#1565c0" /> {/* Blue locomotive */}
             </mesh>
-            {/* Engine Front */}
-            <mesh position={[0, 0.2, 0.3]}>
-                <boxGeometry args={[0.4, 0.3, 0.2]} />
-                <meshStandardMaterial color="#fbc02d" />
+            {/* Locomotive cab/top */}
+            <mesh position={[0, 0.35, -0.1]}>
+                <boxGeometry args={[0.4, 0.2, 0.4]} />
+                <meshStandardMaterial color="#0d47a1" /> {/* Darker blue */}
             </mesh>
+            {/* Locomotive front/cowcatcher */}
+            <mesh position={[0, 0.05, 0.35]}>
+                <boxGeometry args={[0.35, 0.15, 0.15]} />
+                <meshStandardMaterial color="#ffc107" /> {/* Yellow front */}
+            </mesh>
+            {/* Wheels (simplified as boxes for simplicity) */}
+            <mesh position={[-0.22, -0.08, 0.2]}>
+                <boxGeometry args={[0.06, 0.15, 0.15]} />
+                <meshStandardMaterial color="#222" />
+            </mesh>
+            <mesh position={[0.22, -0.08, 0.2]}>
+                <boxGeometry args={[0.06, 0.15, 0.15]} />
+                <meshStandardMaterial color="#222" />
+            </mesh>
+            <mesh position={[-0.22, -0.08, -0.2]}>
+                <boxGeometry args={[0.06, 0.15, 0.15]} />
+                <meshStandardMaterial color="#222" />
+            </mesh>
+            <mesh position={[0.22, -0.08, -0.2]}>
+                <boxGeometry args={[0.06, 0.15, 0.15]} />
+                <meshStandardMaterial color="#222" />
+            </mesh>
+            {/* Cargo indicator when loaded */}
+            {train.cargo && (
+                <mesh position={[0, 0.5, 0]}>
+                    <boxGeometry args={[0.3, 0.15, 0.3]} />
+                    <meshStandardMaterial color="#4caf50" /> {/* Green cargo indicator */}
+                </mesh>
+            )}
         </group>
     );
 };
 
 export const Trains: React.FC = () => {
     const trains = useGameStore((state) => state.trainSystem.trains);
+    // Subscribe to tick to ensure trains list updates when spawned
+    useGameStore((state) => state.tick);
 
     return (
         <group>
