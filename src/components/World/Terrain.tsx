@@ -54,40 +54,43 @@ export const Terrain: React.FC = () => {
                             const state = useGameStore.getState();
                             const { selectedTool, spendMoney, setSelectedEntity, trainSystem } = state;
 
+                            const realTile = state.map.getTile(tile.x, tile.y);
+                            if (!realTile) return;
+
                             // Handle Building
                             if (selectedTool !== 'none') {
                                 if (selectedTool === 'track') {
-                                    if (!tile.hasTrack && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
-                                        tile.hasTrack = true;
+                                    if (!realTile.hasTrack && realTile.type !== TileType.WATER && realTile.type !== TileType.MOUNTAIN) {
+                                        realTile.hasTrack = true;
                                         spendMoney(200);
                                         // Force state update
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'station') {
                                     // Stations should be buildable on tracks (Transport Tycoon style)
-                                    if (!tile.hasStation && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
-                                        tile.hasStation = true;
-                                        tile.hasTrack = true; // Stations include track
+                                    if (!realTile.hasStation && realTile.type !== TileType.WATER && realTile.type !== TileType.MOUNTAIN) {
+                                        realTile.hasStation = true;
+                                        realTile.hasTrack = true; // Stations include track
                                         spendMoney(2000);
                                         // Force state update
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'train') {
-                                    if (tile.hasTrack) {
-                                        trainSystem.spawnTrain(tile.x, tile.y);
+                                    if (realTile.hasTrack) {
+                                        trainSystem.spawnTrain(realTile.x, realTile.y);
                                         spendMoney(5000);
                                         // Force state update for train spawn
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'demolish') {
                                     let changed = false;
-                                    if (tile.hasTrack) {
-                                        tile.hasTrack = false;
+                                    if (realTile.hasTrack) {
+                                        realTile.hasTrack = false;
                                         spendMoney(50);
                                         changed = true;
                                     }
-                                    if (tile.hasStation) {
-                                        tile.hasStation = false;
+                                    if (realTile.hasStation) {
+                                        realTile.hasStation = false;
                                         spendMoney(50);
                                         changed = true;
                                     }
@@ -97,12 +100,12 @@ export const Terrain: React.FC = () => {
                                 }
                             } else {
                                 // Inspect Tool
-                                if (tile.cityId) {
-                                    setSelectedEntity({ type: 'city', id: tile.cityId });
-                                } else if (tile.industryId) {
-                                    setSelectedEntity({ type: 'industry', id: tile.industryId });
+                                if (realTile.cityId) {
+                                    setSelectedEntity({ type: 'city', id: realTile.cityId });
+                                } else if (realTile.industryId) {
+                                    setSelectedEntity({ type: 'industry', id: realTile.industryId });
                                 } else {
-                                    setSelectedEntity({ type: 'tile', x: tile.x, y: tile.y });
+                                    setSelectedEntity({ type: 'tile', x: realTile.x, y: realTile.y });
                                 }
                             }
                         }}
