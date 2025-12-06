@@ -23,8 +23,8 @@ export class MapSystem {
                 let type: TileType = TileType.GRASS;
 
                 if (value < -0.3) type = TileType.WATER;
-                else if (value > 0.4) type = TileType.FOREST;
                 else if (value > 0.7) type = TileType.MOUNTAIN;
+                else if (value > 0.4) type = TileType.FOREST;
 
                 row.push({
                     x,
