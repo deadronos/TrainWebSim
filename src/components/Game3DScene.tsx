@@ -2,7 +2,6 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Terrain } from './World/Terrain';
-import { Entities } from './World/Entities';
 import { Trains } from './World/Trains';
 import { MAP_WIDTH, MAP_HEIGHT } from '../game/types';
 
@@ -25,7 +24,6 @@ export const Game3DScene: React.FC = () => {
                 />
 
                 <Terrain />
-                <Entities />
                 <Trains />
 
                 {/* Grid Helper for reference */}

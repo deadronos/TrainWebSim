@@ -54,40 +54,44 @@ export const Terrain: React.FC = () => {
                             const state = useGameStore.getState();
                             const { selectedTool, spendMoney, setSelectedEntity, trainSystem } = state;
 
+                            // Get REAL tile from map, not the shallow copy in 'tiles'
+                            const realTile = state.map.getTile(tile.x, tile.y);
+                            if (!realTile) return;
+
                             // Handle Building
                             if (selectedTool !== 'none') {
                                 if (selectedTool === 'track') {
-                                    if (!tile.hasTrack && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
-                                        tile.hasTrack = true;
+                                    if (!realTile.hasTrack && realTile.type !== TileType.WATER && realTile.type !== TileType.MOUNTAIN) {
+                                        realTile.hasTrack = true;
                                         spendMoney(200);
                                         // Force state update
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'station') {
                                     // Stations should be buildable on tracks (Transport Tycoon style)
-                                    if (!tile.hasStation && tile.type !== TileType.WATER && tile.type !== TileType.MOUNTAIN) {
-                                        tile.hasStation = true;
-                                        tile.hasTrack = true; // Stations include track
+                                    if (!realTile.hasStation && realTile.type !== TileType.WATER && realTile.type !== TileType.MOUNTAIN) {
+                                        realTile.hasStation = true;
+                                        realTile.hasTrack = true; // Stations include track
                                         spendMoney(2000);
                                         // Force state update
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'train') {
-                                    if (tile.hasTrack) {
-                                        trainSystem.spawnTrain(tile.x, tile.y);
+                                    if (realTile.hasTrack) {
+                                        trainSystem.spawnTrain(realTile.x, realTile.y);
                                         spendMoney(5000);
                                         // Force state update for train spawn
                                         useGameStore.setState({ tick: state.tick + 1 });
                                     }
                                 } else if (selectedTool === 'demolish') {
                                     let changed = false;
-                                    if (tile.hasTrack) {
-                                        tile.hasTrack = false;
+                                    if (realTile.hasTrack) {
+                                        realTile.hasTrack = false;
                                         spendMoney(50);
                                         changed = true;
                                     }
-                                    if (tile.hasStation) {
-                                        tile.hasStation = false;
+                                    if (realTile.hasStation) {
+                                        realTile.hasStation = false;
                                         spendMoney(50);
                                         changed = true;
                                     }
@@ -109,6 +113,50 @@ export const Terrain: React.FC = () => {
                     >
                         <boxGeometry args={[1, height, 1]} />
                         <meshStandardMaterial color={color} />
+
+                        {/* Track Visualization */}
+                        {tile.hasTrack && (
+                            <mesh position={[0, height / 2 + 0.05, 0]}>
+                                <boxGeometry args={[1, 0.1, 0.4]} />
+                                <meshStandardMaterial color="#3e2723" />
+                            </mesh>
+                        )}
+                        {tile.hasTrack && (
+                            <mesh position={[0, height / 2 + 0.05, 0]} rotation={[0, Math.PI / 2, 0]}>
+                                <boxGeometry args={[1, 0.1, 0.1]} />
+                                <meshStandardMaterial color="#5d4037" />
+                            </mesh>
+                        )}
+
+                        {/* Station Visualization */}
+                        {tile.hasStation && (
+                            <group>
+                                <mesh position={[0, height / 2 + 0.05, 0]}>
+                                    <boxGeometry args={[0.9, 0.1, 0.9]} />
+                                    <meshStandardMaterial color="#b71c1c" />
+                                </mesh>
+                                <mesh position={[0, height / 2 + 0.35, 0]}>
+                                    <boxGeometry args={[0.6, 0.5, 0.6]} />
+                                    <meshStandardMaterial color="#d32f2f" />
+                                </mesh>
+                            </group>
+                        )}
+
+                        {/* Cities */}
+                        {tile.cityId && (
+                            <mesh position={[0, height / 2 + 0.5, 0]}>
+                                <boxGeometry args={[0.8, 1, 0.8]} />
+                                <meshStandardMaterial color="#ff5722" />
+                            </mesh>
+                        )}
+
+                        {/* Industries */}
+                        {tile.industryId && (
+                            <mesh position={[0, height / 2 + 0.4, 0]}>
+                                <boxGeometry args={[0.8, 0.8, 0.8]} />
+                                <meshStandardMaterial color="#9c27b0" />
+                            </mesh>
+                        )}
                     </mesh>
                 );
             })}
