@@ -54,6 +54,7 @@ export const Terrain: React.FC = () => {
                             const state = useGameStore.getState();
                             const { selectedTool, spendMoney, setSelectedEntity, trainSystem } = state;
 
+                            // Get REAL tile from map, not the shallow copy in 'tiles'
                             const realTile = state.map.getTile(tile.x, tile.y);
                             if (!realTile) return;
 
@@ -112,6 +113,50 @@ export const Terrain: React.FC = () => {
                     >
                         <boxGeometry args={[1, height, 1]} />
                         <meshStandardMaterial color={color} />
+
+                        {/* Track Visualization */}
+                        {tile.hasTrack && (
+                            <mesh position={[0, height / 2 + 0.05, 0]}>
+                                <boxGeometry args={[1, 0.1, 0.4]} />
+                                <meshStandardMaterial color="#3e2723" />
+                            </mesh>
+                        )}
+                        {tile.hasTrack && (
+                            <mesh position={[0, height / 2 + 0.05, 0]} rotation={[0, Math.PI / 2, 0]}>
+                                <boxGeometry args={[1, 0.1, 0.1]} />
+                                <meshStandardMaterial color="#5d4037" />
+                            </mesh>
+                        )}
+
+                        {/* Station Visualization */}
+                        {tile.hasStation && (
+                            <group>
+                                <mesh position={[0, height / 2 + 0.05, 0]}>
+                                    <boxGeometry args={[0.9, 0.1, 0.9]} />
+                                    <meshStandardMaterial color="#b71c1c" />
+                                </mesh>
+                                <mesh position={[0, height / 2 + 0.35, 0]}>
+                                    <boxGeometry args={[0.6, 0.5, 0.6]} />
+                                    <meshStandardMaterial color="#d32f2f" />
+                                </mesh>
+                            </group>
+                        )}
+
+                        {/* Cities */}
+                        {tile.cityId && (
+                            <mesh position={[0, height / 2 + 0.5, 0]}>
+                                <boxGeometry args={[0.8, 1, 0.8]} />
+                                <meshStandardMaterial color="#ff5722" />
+                            </mesh>
+                        )}
+
+                        {/* Industries */}
+                        {tile.industryId && (
+                            <mesh position={[0, height / 2 + 0.4, 0]}>
+                                <boxGeometry args={[0.8, 0.8, 0.8]} />
+                                <meshStandardMaterial color="#9c27b0" />
+                            </mesh>
+                        )}
                     </mesh>
                 );
             })}

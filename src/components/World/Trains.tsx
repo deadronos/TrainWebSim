@@ -15,13 +15,11 @@ const TrainMesh: React.FC<{ train: any }> = ({ train }) => {
             meshRef.current.position.set(train.x, 0.4, train.y);
 
             // Rotation
-            if (train.path.length > 0) {
+            if (train.path && train.path.length > 0) {
                 const target = train.path[0];
                 const dx = target.x - train.x;
                 const dy = target.y - train.y;
-                const angle = Math.atan2(dx, dy); // In 3D (x, z), atan2(x, y) gives angle from Z axis? 
-                // 3D space: x is right, z is down (screen). 
-                // atan2(dx, dy) -> 0 when dx=0, dy=1 (moving down Z).
+                const angle = Math.atan2(dx, dy);
                 meshRef.current.rotation.y = angle;
             }
         }
