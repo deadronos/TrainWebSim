@@ -44,4 +44,17 @@ export class MapSystem {
         if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) return null;
         return this.grid[y][x];
     }
+
+    getNeighborsWithTrack(x: number, y: number): Tile[] {
+        const neighbors = [
+            { x, y: y - 1 },
+            { x, y: y + 1 },
+            { x: x - 1, y },
+            { x: x + 1, y },
+        ];
+
+        return neighbors
+            .map((n) => this.getTile(n.x, n.y))
+            .filter((t): t is Tile => t !== null && t.hasTrack);
+    }
 }

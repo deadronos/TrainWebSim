@@ -199,9 +199,14 @@ export const GameCanvas: React.FC = () => {
                     }
                 } else if (selectedTool === 'train') {
                     if (tile.hasTrack) {
+                        // Ensure we don't spawn two trains on same spot (simple check)
                         const trainSystem = useGameStore.getState().trainSystem;
-                        trainSystem.spawnTrain(tx, ty);
-                        spendMoney(5000);
+                        const existingTrain = trainSystem.trains.find(t => Math.round(t.x) === tx && Math.round(t.y) === ty);
+
+                        if (!existingTrain) {
+                            trainSystem.spawnTrain(tx, ty);
+                            spendMoney(5000);
+                        }
                     }
                 } else if (selectedTool === 'demolish') {
                     if (tile.hasTrack) {

@@ -24,6 +24,8 @@ export interface Industry {
     y: number;
     name: string;
     inventory: Record<string, number>; // Cargo storage
+    inputBuffer: Record<string, number>; // Raw materials needed
+    outputBuffer: Record<string, number>; // Produced goods waiting for transport
 }
 
 export interface City {
@@ -33,6 +35,7 @@ export interface City {
     name: string;
     population: number;
     passengers: number;
+    goodsDemanded: number;
 }
 
 export interface Tile {
@@ -55,8 +58,22 @@ export interface Train {
     path: { x: number; y: number }[]; // List of tile coordinates
     cargo: { type: string; amount: number } | null;
     targetStationId?: string;
+    state: 'IDLE' | 'MOVING' | 'LOADING' | 'UNLOADING';
+    waitTimer: number;
 }
 
 export const TILE_SIZE = 32;
 export const MAP_WIDTH = 64;
 export const MAP_HEIGHT = 64;
+
+export const CargoType = {
+    PASSENGERS: 'passengers',
+    COAL: 'coal',
+    IRON: 'iron',
+    WOOD: 'wood',
+    GRAIN: 'grain',
+    GOODS: 'goods',
+    STEEL: 'steel',
+} as const;
+
+export type CargoType = typeof CargoType[keyof typeof CargoType];
