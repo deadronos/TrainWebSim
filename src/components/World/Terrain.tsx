@@ -101,12 +101,12 @@ export const Terrain: React.FC = () => {
                                 }
                             } else {
                                 // Inspect Tool
-                                if (tile.cityId) {
-                                    setSelectedEntity({ type: 'city', id: tile.cityId });
-                                } else if (tile.industryId) {
-                                    setSelectedEntity({ type: 'industry', id: tile.industryId });
+                                if (realTile.cityId) {
+                                    setSelectedEntity({ type: 'city', id: realTile.cityId });
+                                } else if (realTile.industryId) {
+                                    setSelectedEntity({ type: 'industry', id: realTile.industryId });
                                 } else {
-                                    setSelectedEntity({ type: 'tile', x: tile.x, y: tile.y });
+                                    setSelectedEntity({ type: 'tile', x: realTile.x, y: realTile.y });
                                 }
                             }
                         }}
